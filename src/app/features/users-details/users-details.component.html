@@ -1,0 +1,18 @@
+<div class="overlay p-4" *ngIf="submitted">
+            <div class="center">
+                <mat-progress-bar mode="buffer"></mat-progress-bar>
+            </div>
+        </div>
+<div class="card shadow m-4" *ngIf="users">
+    <div class="row">
+        <img class="col-md-4" src={{users.avatar}}>
+        <div class="col-md-8 d-flex align-items-center ">
+            <div class="card-body text-center">
+                <p class="card-title" style="font-size: 1.2em;">First Name: {{users.first_name}}</p>
+                <p class="card-title" style="font-size: 1.2em;">Last Name: {{users.last_name}}</p>
+                <p class="text-primary">Email: {{users.email}} </p>
+                <button type="button" class="btn btn-primary me-2" (click)="navigate()">Back</button>
+            </div>
+        </div>
+    </div>
+</div>

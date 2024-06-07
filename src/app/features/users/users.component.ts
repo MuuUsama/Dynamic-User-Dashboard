@@ -10,7 +10,7 @@ import { PageEvent } from '@angular/material/paginator';
   styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
-  users!: Users[];
+  users: Users[] = [];
   page: number = 0;
   perPage: number = 6;
   totalRows: number = 0;
@@ -23,22 +23,28 @@ export class UsersComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getUsersData({ pageIndex: 0, pageSize: this.perPage });
+    this.getUsersData({ pageIndex: this.page, pageSize: this.perPage });
   }
 
   getUsersData(event: { pageIndex: number, pageSize: number }): void {
-    this.submitted = true
+    this.submitted = true;
     const page = event.pageIndex + 1;
     this.userRepository.getUsersData(page).subscribe(res => {
-      this.users = res.data;
-      this.totalRows = res.pagination.total;
-      this.submitted = false
-    })
+      this.users = res.data || [];
+      this.totalRows = res.pagination?.total || 0;
+      this.submitted = false;
+    }, error => {
+      console.error('Error fetching users data:', error);
+      this.submitted = false;
+    });
   }
+
   pageChanged(event: PageEvent) {
-    this.perPage = event.pageIndex;
-    this.getUsersData({ pageIndex: 0, pageSize: this.perPage });
+    this.page = event.pageIndex;
+    this.perPage = event.pageSize;
+    this.getUsersData({ pageIndex: this.page, pageSize: this.perPage });
   }
+
   onSearch(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const id = inputElement.value;
@@ -58,18 +64,8 @@ export class UsersComponent implements OnInit {
       );
     }
   }
+
   navigate(id: number): void {
     this.router.navigate([`user`, id]);
-  }
-  prevPage() {
-    if (this.page > 1) {
-      this.page--;
-      this.getUsersData({ pageIndex: 0, pageSize: this.perPage });
-    }
-  }
-
-  nextPage() {
-    this.page++;
-    this.getUsersData({ pageIndex: 0, pageSize: this.perPage });
   }
 }

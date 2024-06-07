@@ -7,12 +7,14 @@
         </form>
     </div>
 </nav>
-<div *ngIf="submitted">
-    <mat-progress-bar mode="buffer"></mat-progress-bar>
+<div *ngIf="submitted" class="overlay p-4">
+    <div class="center">
+        <mat-progress-bar mode="buffer"></mat-progress-bar>
+    </div>
 </div>
 <div class="container-fluid p-4">
     <div class="row">
-        <mat-card *ngFor="let user of users" class="col-md-4 col-lg-3">
+        <mat-card *ngFor="let user of filteredUsers" class="col-md-4 col-lg-3">
             <mat-card-content class="card shadow m-1">
                 <div class="card-img-top mt-2 text-center">
                     <img [src]="user.avatar" alt="User Avatar" class="w-50 rounded-circle">

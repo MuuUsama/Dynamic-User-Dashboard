@@ -3,7 +3,10 @@ import {Pagination} from "./pagination";
 export interface Response<T> {
   data: T[];
   details:T;
-  pagination: Pagination;
+  page: number;
+  total_pages: number;
+  total: number;
+  per_page: number;
 }
 export interface Respn<T> {
   data: T;

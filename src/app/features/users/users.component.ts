@@ -3,6 +3,7 @@ import { Users } from 'src/app/domain/users/models/users';
 import { UsersRepository } from 'src/app/domain/users/users.repository';
 import { Router } from '@angular/router';
 import { PageEvent } from '@angular/material/paginator';
+import { Response } from 'src/app/core/models/response';
 
 @Component({
   selector: 'app-users',
@@ -11,6 +12,7 @@ import { PageEvent } from '@angular/material/paginator';
 })
 export class UsersComponent implements OnInit {
   users: Users[] = [];
+  filteredUsers: Users[] = [];
   page: number = 0;
   perPage: number = 6;
   totalRows: number = 0;
@@ -29,9 +31,10 @@ export class UsersComponent implements OnInit {
   getUsersData(event: { pageIndex: number, pageSize: number }): void {
     this.submitted = true;
     const page = event.pageIndex + 1;
-    this.userRepository.getUsersData(page).subscribe(res => {
+    this.userRepository.getUsersData(page).subscribe((res: Response<Users>) => {
       this.users = res.data || [];
-      this.totalRows = res.pagination?.total || 0;
+      this.filteredUsers = this.users;
+      this.totalRows = res.total
       this.submitted = false;
     }, error => {
       console.error('Error fetching users data:', error);
@@ -39,7 +42,7 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  pageChanged(event: PageEvent) {
+  pageChanged(event: PageEvent): void {
     this.page = event.pageIndex;
     this.perPage = event.pageSize;
     this.getUsersData({ pageIndex: this.page, pageSize: this.perPage });
@@ -48,20 +51,11 @@ export class UsersComponent implements OnInit {
   onSearch(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const id = inputElement.value;
-
     if (id) {
-      this.userRepository.getUsersData(+id).subscribe(
-        data => {
-          if (data.data) {
-            this.router.navigate(['/user', id]);
-          } else {
-            alert('User not found');
-          }
-        },
-        error => {
-          alert('User not found');
-        }
-      );
+      const searchId = +id;
+      this.filteredUsers = this.users.filter(user => user.id === searchId);
+    } else {
+      this.filteredUsers = this.users;
     }
   }
 
